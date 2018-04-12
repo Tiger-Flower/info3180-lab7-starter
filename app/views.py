@@ -23,24 +23,31 @@ def index():
 
 
 @app.route('/api/upload', methods=['POST'])
-def contact():
-    UploadForm = UploadForm()
+def upload():
+    uploadForm = UploadForm()
     if request.method == 'POST':
-        if UploadForm.validate_on_submit():
+        if uploadForm.validate_on_submit():
             
-            file              = UploadForm.photo.data
-            filename          = file.filename
-            description       = UploadForm.description.data
-            file.save(secure_filename(filename))
-            return jsonify(
-                    message="File Upload Successful",
-                    filename= filename,
-                    description=description )
+            description       = uploadForm.description.data
+            photo      = uploadForm.photo.data
+            filename   = photo.filename
+            photo.save(os.path.join(app.config['UPLOAD_FOLDER'],filename))
+            return jsonify(message="File uploaded", filename= filename,description=description)
         else:
-            
-            return jsonify(errors=form_errors(UploadForm))
-             
+            errors=form_errors(uploadForm)
+            return jsonify(errors)
+ 
+@app.route('/api/upload3', methods=['post'])
+def contact():
+    msg="hey"
+    return jsonify(msg)            
 
+
+@app.route("/api/upload2",methods=['post'])
+def tasks():
+ tasks = [{'id': 1, 'title': 'Hello'},
+{'id': 2, 'title': 'World'}]
+ return jsonify(tasks=tasks)
 # Here we define a function to collect form errors from Flask-WTF
 # which we can later use
 def form_errors(form):

@@ -12,6 +12,9 @@ Vue.component('app-header', {
           <li class="nav-item active">
             <router-link class="nav-link" to="/">Home <span class="sr-only">(current)</span></router-link>
           </li>
+          <li class="nav-item">
+            <router-link class="nav-link" to="/uploadphoto">Upload Photo <span class="sr-only">(current)</span></router-link>
+          </li>
         </ul>
       </div>
     </nav>
@@ -28,6 +31,61 @@ Vue.component('app-footer', {
     `
 });
 
+const uploadphoto = Vue.component('upload-form', {
+  template: `
+  <div>
+  <h1>Upload new File</h1>
+    <form id="uploadForm" method=post enctype=multipart/form-data @submit.prevent="uploadPhoto">
+    <div class="form-group">
+        <label for="description">Description</label>
+        <textarea class="form-control" name="description" id="description" placeholder="Enter description here"></textarea>
+    </div>
+    <div class="form-group">
+        <label for="photo">Photo</label>
+        <input name="photo" id="photo" type="file">
+    </div>
+    <button type=submit class="btn btn-primary" > Upload </button>
+    </form>
+  </div>
+  
+  `,
+     methods:{
+         uploadPhoto: function() { 
+          let uploadForm = document.getElementById('uploadForm');
+          let form_data = new FormData(uploadForm);
+          
+          fetch("/api/upload", 
+          {method: 'POST',
+          body: form_data,
+          headers: { 'X-CSRFToken': token }, 
+          credentials: 'same-origin'})
+          
+          .then(function (response) {
+              return response.json();
+              
+          }).then(function (jsonResponse) {
+              console.log(jsonResponse);
+              
+          }).catch(function (error) { 
+              console.log(error);
+              
+          });},
+        
+        uploadPhoto2: function() {
+            fetch('/api/upload3',{method: 'post'}).then(function(response) {
+                return response.json();
+              })
+              .then(function(myJson) {
+                console.log(myJson);
+              });
+        }
+     }
+    
+});
+
+
+
+
 const Home = Vue.component('home', {
    template: `
     <div class="jumbotron">
@@ -43,7 +101,9 @@ const Home = Vue.component('home', {
 // Define Routes
 const router = new VueRouter({
     routes: [
-        { path: "/", component: Home }
+        { path: "/", component: Home },
+        { path: "/uploadphoto", component: uploadphoto }
+        
     ]
 });
 

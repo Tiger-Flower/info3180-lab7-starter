@@ -32,10 +32,10 @@ def upload():
             photo      = uploadForm.photo.data
             filename   = photo.filename
             photo.save(os.path.join(app.config['UPLOAD_FOLDER'],filename))
-            return jsonify(message="File uploaded", filename= filename,description=description)
+            return jsonify(message="200OK", filename= filename,description=description)
         else:
             errors=form_errors(uploadForm)
-            return jsonify(errors)
+            return jsonify(errors=errors)
  
 @app.route('/api/upload3', methods=['post'])
 def contact():

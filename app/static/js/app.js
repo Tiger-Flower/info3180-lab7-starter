@@ -35,6 +35,15 @@ const uploadphoto = Vue.component('upload-form', {
   template: `
   <div>
   <h1>Upload new File</h1>
+    
+    <div v-for="error in errorMessages">
+        <div class="alert alert-danger" role="alert">
+          {{ error }}
+        </div>
+    </div>
+    <div v-if="this.statusMsg == '200OK'" class="alert alert-success" role="alert">
+        File successfully uploaded
+    </div>
     <form id="uploadForm" method=post enctype=multipart/form-data @submit.prevent="uploadPhoto">
     <div class="form-group">
         <label for="description">Description</label>
@@ -50,7 +59,8 @@ const uploadphoto = Vue.component('upload-form', {
   
   `,
      methods:{
-         uploadPhoto: function() { 
+         uploadPhoto: function() {
+          let self = this; 
           let uploadForm = document.getElementById('uploadForm');
           let form_data = new FormData(uploadForm);
           
@@ -62,24 +72,19 @@ const uploadphoto = Vue.component('upload-form', {
           
           .then(function (response) {
               return response.json();
-              
           }).then(function (jsonResponse) {
               console.log(jsonResponse);
-              
+               self.errorMessages = jsonResponse.errors;
+               self.statusMsg = jsonResponse.message;
           }).catch(function (error) { 
               console.log(error);
               
-          });},
+          });}
         
-        uploadPhoto2: function() {
-            fetch('/api/upload3',{method: 'post'}).then(function(response) {
-                return response.json();
-              })
-              .then(function(myJson) {
-                console.log(myJson);
-              });
-        }
-     }
+        
+         
+     },
+     data:function(){ return{errorMessages:[],statusMsg: ''  }}
     
 });
 
